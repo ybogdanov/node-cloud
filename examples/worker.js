@@ -6,19 +6,15 @@ var Cloud = require('../lib'),
 
 var config = {
     
-    ns : 'test',
-    
-    redis : {
-        host : '127.0.0.1',
-        port : 6379
-    },
+    debug : true,
     
     actions : {
         
+        ping : function(packet, callback) {
+            callback(null, packet);
+        },
+        
         sum : function(a, b, callback) {
-            
-            console.log('sum() called with args: ', arguments);
-            
             if (a > b) {
                 return callback("a cannot be greater than b");
             }
@@ -29,33 +25,44 @@ var config = {
         
         sum2 : {
             
-            threads : 10,
-            atomic : true, // mutex/ this task is unique
-            timeout : 10000, // overall timeout for the task
+            atomic : true,
+            threads : 50,
+            //timeout : 1000, // overall timeout for the task (for clients)
             
             fn : function(a, b, callback) {
-                
-                console.log('sum2() called with args: ', argments);
-                
                 if (a > b) {
                     return callback("a cannot be greater than b");
                 }
                 setTimeout(function(){
                     callback(null, a + b);
-                }, 100)
+                }, 2000)
             }
         }
     }
 }
 
 
-// Create two nodes
+// Create cluster worker
 var worker = new Cloud.Worker(config);
-worker.start();
 
 worker.on('error', function(err){
-    console.error('Cloud server error: ' + err);
+    console.error('Cloud worker error: ' + err.stack);
 })
 
-console.log('Cloud server started at /%s/%s', worker.ns, worker.name);
-
+if (module.parent) {
+    module.exports = worker;
+}
+else {
+    worker.start();
+    console.log('Cloud worker started at /%s/%s', worker.ns, worker.name);
+    
+    process.once('SIGINT', function(){
+        console.log('SIGINT');
+        process.once('SIGINT', function(){
+            process.exit();
+        })
+        worker.shutdown(function(err){
+            process.exit();
+        })
+    })
+}

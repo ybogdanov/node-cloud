@@ -4,11 +4,12 @@ var Cloud = require('../lib'),
 
 var config = {
     
-    ns : 'test',
-    
-    redis : {
-        host : '127.0.0.1',
-        port : 6379
+    actions : {
+        sum : {},
+        sum2 : {
+            atomic : true,
+            //timeout : 1000
+        }
     }
 }
 
@@ -20,9 +21,12 @@ client.on('error', function(err){
     console.error('Cloud client error: ' + err.stack);
 })
 
-client.ready(function(){
-    client.sum(2, 2, function(err, result){
-        if (err) return console.error(err);
+setInterval(function(){
+    console.log('sum')
+    client.sum2(2, 2);
+    return;
+    client.sum2(2, 2, function(err, result){
+        if (err) return console.error(err.stack);
         console.log('sum(): ', result);
     })
-})
+}, 300)
