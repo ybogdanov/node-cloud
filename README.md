@@ -9,13 +9,6 @@ It's the first draft - TODO.
     // Cloud worker - you can launch as many instances as you want within same namespace
     var worker = new Cloud.Worker({
         
-        // current cloud namespace
-        ns : 'test',
-        redis : {
-            host : '127.0.0.1',
-            port : 6379
-        },
-        
         // The list of actions on the cloud
         actions : {
 
@@ -36,10 +29,10 @@ It's the first draft - TODO.
     worker.start();
 
     worker.on('error', function(err){
-        console.error('Cloud server error: ' + err);
+        console.error('Cloud worker error: ' + err);
     })
 
-    console.log('Cloud server started at /%s/%s', worker.ns, worker.name);
+    console.log('Cloud worker started at /%s/%s', worker.ns, worker.name);
     
 ## client.js
 
@@ -48,20 +41,15 @@ It's the first draft - TODO.
     // Cloud worker - you can launch as many instances as you want within same namespace
     var client = new Cloud.Client({
         // here we need just to specify namespace & redis connection params
-        ns : 'test',
-        redis : {
-            host : '127.0.0.1',
-            port : 6379
-        },
+        actions : {
+            sum : {}
+        }
     });
     
-    // Wait when client will be connected and API will be ready
-    client.ready(function(){
-        // Simply call the function in the cloud
-        client.sum(2, 2, function(err, result){
-            if (err) return console.error(err);
-            console.log('sum(): ', result);
-        })
+    // Simply call the function in the cloud
+    client.sum(2, 2, function(err, result){
+        if (err) return console.error(err);
+        console.log('sum(): ', result);
     })
 
 ## server.js output:
