@@ -1,7 +1,7 @@
 {
     "name": "cloud",
     "description": "Cloud computing with node and redis",
-    "version": "v0.0.2",
+    "version": "v0.0.3",
     "url": "http://github.com/0ctave/node-cloud",
     "author": "Yuriy Bogdanov <chinsay@gmail.com>",
     "main": "lib/index.js",
