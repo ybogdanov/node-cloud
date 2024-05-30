@@ -1,5 +1,9 @@
+# Deprecation Notice
+
+This project has been archived and will no longer receive maintenance or updates.
+
 # node-cloud
-Cloud computing with node.js and redis.
+Background workers with node.js and redis.
 It's the first draft - TODO.
 
 ## server.js
